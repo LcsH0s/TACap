@@ -7,4 +7,4 @@ from TwitterClient import TwitterClient
 
 tw = TwitterClient()
 tw.authenticate()
-tw.get_from_hashtag("olympicgames")
+tw.get_user_sg("Luludc17")

@@ -14,8 +14,38 @@ class TwitterClient():
         )
         self.api = tweepy.API(self.auth, wait_on_rate_limit=True)
 
-    def get_from_hashtag(self, hashtag: str, tweet_cap: int, fav_threshold: int):
-        for _, tweet in zip(range(tweet_cap), tweepy.Cursor(self.api.search_tweets, q=f'#{hashtag}').items()):
+    def get_from_hashtag(self, hashtag: str, tweet_cap: int = 2000, fav_threshold: int = 20):
+        for tweet in tweepy.Cursor(self.api.search_tweets, q=f'#{hashtag}').items(tweet_cap):
             if tweet.favorite_count >= fav_threshold:
                 print(
                     f'{tweet.user.name} tweeted at {tweet.created_at} and tweet was liked {tweet.favorite_count} times')
+
+    def get_user_sg(self, username: str):
+        user = self.api.get_user(screen_name=username)
+        print(
+            f'{user.screen_name} has {user.followers_count} followers and follows {user.friends_count} people.')
+        print(f'Has {user.favourites_count} fav accounts')
+        print(f'Has tweeted : {user.statuses_count} times')
+
+        friends = []
+        for page in tweepy.Cursor(self.api.get_friends, screen_name=username,
+                                  count=200).pages(10):
+            for user in page:
+                name = f"{user.id} - {user.name} (@{user.screen_name})"
+                # print(name)
+                friends.append(name)
+
+        followers = []
+        for page in tweepy.Cursor(self.api.get_followers, screen_name=username,
+                                  count=200).pages(10):
+            for user in page:
+                name = f"{user.id} - {user.name} (@{user.screen_name})"
+                followers.append(name)
+            print(len(page))
+
+        print('\n\nFriends : \n')
+        for f in friends:
+            print(f)
+        print('\n\nFollowers : \n')
+        for f in followers:
+            print(f)
