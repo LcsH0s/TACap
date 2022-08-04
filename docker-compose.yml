@@ -1,5 +1,0 @@
-services:
-  tacap:
-    build: .
-    volumes:
-      - /Users/lucasdecastro/Documents/XPROG/TACap/logs:/logs
