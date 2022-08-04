@@ -1,4 +1,7 @@
-all: conda exec
+all: install run
 
-conda:
-	conda create --name gt -c conda-forge graph-tool
+install:
+	conda env update -f cfg/environment.yml
+
+run:
+	conda run -n tacap-env python3 src/app.py

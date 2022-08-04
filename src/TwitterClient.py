@@ -3,7 +3,7 @@ import tweepy
 
 
 class TwitterClient():
-    def __init__(self, cfg_path='../cfg/config.json'):
+    def __init__(self, cfg_path='cfg/config.json'):
         self.cfg_path = cfg_path
         with open(cfg_path) as f:
             self.config = json.loads(f.read())
