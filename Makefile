@@ -5,3 +5,6 @@ install:
 
 run:
 	conda run -n tacap-env python3 src/app.py
+
+test:
+	conda run -n tacap-env python3 src/test.py

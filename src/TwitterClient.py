@@ -1,5 +1,16 @@
+from itertools import count
 import json
 import tweepy
+
+
+class TwitterUser():
+    def __init__(self, name, screen_name, user_id) -> None:
+        self.name = name
+        self.screen_name = screen_name
+        self.id = user_id
+        self.friends = []
+        self.friend_ids = []
+        self.followers = []
 
 
 class TwitterClient():
@@ -20,32 +31,41 @@ class TwitterClient():
                 print(
                     f'{tweet.user.name} tweeted at {tweet.created_at} and tweet was liked {tweet.favorite_count} times')
 
-    def get_user_sg(self, username: str):
-        user = self.api.get_user(screen_name=username)
-        print(
-            f'{user.screen_name} has {user.followers_count} followers and follows {user.friends_count} people.')
-        print(f'Has {user.favourites_count} fav accounts')
-        print(f'Has tweeted : {user.statuses_count} times')
+    def get_user(self, screen_name) -> TwitterUser:
+        usr = self.api.get_user(screen_name=screen_name)
+        return TwitterUser(usr.name, usr.screen_name, usr.id)
 
+    def get_user_friends(self, screen_name: str):
+        friend_ids = list(self.api.get_friend_ids(
+            screen_name=screen_name, count=5000))
+
+        friend_ids = [friend_ids[i:i+100]
+                      for i in range(0, len(friend_ids), 100)]
+        friends_obj = []
         friends = []
-        for page in tweepy.Cursor(self.api.get_friends, screen_name=username,
-                                  count=200).pages(10):
-            for user in page:
-                name = f"{user.id} - {user.name} (@{user.screen_name})"
-                # print(name)
-                friends.append(name)
 
+        for uid_chunk in friend_ids:
+            friends_obj += self.api.lookup_users(user_id=uid_chunk)
+
+        for friend in friends_obj:
+            friends.append(friend.screen_name)
+
+        return (friends, friend_ids)
+
+    def get_user_sg(self, screen_name: str):
+        friends, _ = self.get_user_friends(screen_name=screen_name)
+        sg = []
+        for friend in friends:
+            sg.append(self.get_user_friends(friend)[0])
+
+        return sg
+
+    def get_user_followers(self, screen_name: str):
         followers = []
-        for page in tweepy.Cursor(self.api.get_followers, screen_name=username,
+        for page in tweepy.Cursor(self.api.get_followers, screen_name=screen_name,
                                   count=200).pages(10):
             for user in page:
-                name = f"{user.id} - {user.name} (@{user.screen_name})"
-                followers.append(name)
-            print(len(page))
+                followers.append(TwitterUser(
+                    user.name, user.screen_name, user.id))
 
-        print('\n\nFriends : \n')
-        for f in friends:
-            print(f)
-        print('\n\nFollowers : \n')
-        for f in followers:
-            print(f)
+        return followers
