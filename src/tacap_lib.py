@@ -272,6 +272,8 @@ class TACapClient():
                                           [-1].replace(f'.{format}', '').split('--')[-1])
 
 
+# TODO: Create same drawing social graph but from a hashtag
+
 """
 
     def get_from_hashtag(self, hashtag: str, tweet_cap: int = 2000, fav_threshold: int = 20):
