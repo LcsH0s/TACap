@@ -14,10 +14,27 @@ class TwitterUser():
 
 
 class TwitterClient():
-    def __init__(self, cfg_path='cfg/config.json'):
-        self.cfg_path = cfg_path
-        with open(cfg_path) as f:
-            self.config = json.loads(f.read())
+    def __init__(self, cfg_path: str):
+        if cfg_path == None:
+            print("No file path specified. Using default 'config.json'")
+            self.cfg_path = 'config.json'
+
+        try:
+            with open(self.cfg_path) as f:
+                self.config = json.loads(f.read())
+
+        except FileNotFoundError:
+            print("No 'config.json' file found. Creating configuration file :")
+            self.config = {"api_key": r"88heXiv5cIn5qiZEGDg6bTWl5",
+                           "api_secret": r"b90Gz9F0E6rDGwx5F3jJXGagKAWQxqwpsSyWloow6bPyVmJPnK",
+                           "bearer_token": r"AAAAAAAAAAAAAAAAAAAAAFH4eQEAAAAAm0pQpGaDOiKw62csnhVGHGZVl%2FM%3DMpqlTAK3CjnbygCWaPUNBm1z2KlvB9rUQLr9wJsvsd8PosPtCx",
+                           "access_token": r"1524312708815937537-mqcR0exoVqiWMZOIf69xs9wrK71DxW",
+                           "access_secret": r"kqQ8vnHmlLlGQkRwojSwq9o2iJyP1nR0IXj84JSFOtvEx",
+                           "client_id": r"WnhsUlVCZndiMW1ma3dGa0Jma046MTpjaQ",
+                           "client_secret": r"G6G5_IFCXHQyc2kKCYncxs9vhC2AikqU85AF_uhwN8_qkEJlPe"}
+
+            with open(cfg_path, "w") as f:
+                self.config = json.loads(f.read())
 
     def authenticate(self):
         self.auth = tweepy.OAuth1UserHandler(
@@ -50,7 +67,7 @@ class TwitterClient():
         for friend in friends_obj:
             friends.append(friend.screen_name)
 
-        return (friends, friend_ids)
+        return (friends, friend_ids[0])
 
     def get_user_sg(self, screen_name: str):
         friends, _ = self.get_user_friends(screen_name=screen_name)

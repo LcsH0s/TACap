@@ -1,10 +1,13 @@
-all: install run
+all: setup run
 
-install:
-	conda env update -f cfg/environment.yml
+setup:
+	brew install graphviz
+	export GRAPHVIZ_DIR="/usr/local/Cellar/graphviz/5.0.1"
+	python -m pip install pygraphviz --global-option=build_ext --global-option="-I$GRAPHVIZ_DIR/include" --global-option="-L$GRAPHVIZ_DIR/lib"
+	python -m pip install -r ./cfg/requirements.txt
 
 run:
-	conda run -n tacap-env python3 src/app.py
+	python src/app.py
 
 test:
-	conda run -n tacap-env python3 src/test.py
+	python src/test.py
