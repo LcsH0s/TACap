@@ -156,3 +156,5 @@ cython_debug/
 # TACap
 config.json
 *.pdf
+.DS_Store
+.vscode
