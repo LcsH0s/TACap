@@ -5,7 +5,7 @@ def main():
     tw = TACapClient(eco_mode=True)
 
     tw.draw_social_graph(screen_name='xxx',
-                         mode='both', filename='ilias.pdf')
+                         mode='both', filename='xxx.pdf')
 
     tw.save_graph_dict(format='json')
 
